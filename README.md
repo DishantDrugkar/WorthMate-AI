@@ -1,4 +1,4 @@
-🚀 WorthMate-AI
+🚀 *WorthMate-AI*
 
 AI-powered 1:1 Career Consultation & Guidance Platform
 
