@@ -25,31 +25,36 @@ public class JwtFilter extends OncePerRequestFilter {
     private CustomUserDetailsService userDetailsService;
 
     @Override
-    protected void doFilterInternal(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain)
             throws ServletException, IOException {
 
-        String authHeader = request.getHeader("Authorization");
+        // Public endpoints jahan JWT check nahi karna
+        String path = request.getRequestURI();
+        if (path.startsWith("/auth") || path.equals("/health")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
 
+        // Authorization header se token nikalna
+        String authHeader = request.getHeader("Authorization");
         String token = null;
         String email = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-
             token = authHeader.substring(7);
 
+            // Token validate karna
             if (jwtUtil.validateToken(token)) {
                 email = jwtUtil.extractEmail(token);
             }
         }
 
-        if (email != null &&
-                SecurityContextHolder.getContext().getAuthentication() == null) {
+        // Agar token valid hai aur authentication context empty hai
+        if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
-            UserDetails userDetails =
-                    userDetailsService.loadUserByUsername(email);
+            UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
             UsernamePasswordAuthenticationToken authentication =
                     new UsernamePasswordAuthenticationToken(
@@ -62,9 +67,11 @@ public class JwtFilter extends OncePerRequestFilter {
                     new WebAuthenticationDetailsSource().buildDetails(request)
             );
 
+            // Set authentication in context
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
+        // Next filter call
         filterChain.doFilter(request, response);
     }
 }

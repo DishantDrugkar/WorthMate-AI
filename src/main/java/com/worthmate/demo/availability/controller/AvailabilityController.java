@@ -1,5 +1,6 @@
 package com.worthmate.demo.availability.controller;
 
+import com.worthmate.demo.availability.dto.CreateSlotRequest;
 import com.worthmate.demo.availability.entity.AvailabilitySlotEntity;
 import com.worthmate.demo.availability.service.AvailabilityService;
 import org.springframework.web.bind.annotation.*;
@@ -19,12 +20,13 @@ public class AvailabilityController {
     }
 
     @PostMapping("/create")
-    public AvailabilitySlotEntity createSlot(@RequestParam Long mentorId, @RequestParam String start, @RequestParam String end) {
+    public AvailabilitySlotEntity createSlot(
+            @RequestBody CreateSlotRequest request) {
 
         return availabilityService.createSlot(
-                mentorId,
-                LocalDateTime.parse(start),
-                LocalDateTime.parse(end)
+                request.getMentorId(),
+                request.getStart(),
+                request.getEnd()
         );
     }
 

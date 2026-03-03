@@ -6,7 +6,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -15,10 +14,13 @@ public class ConsultationController {
 
     private final ConsultationService consultationService;
 
-    public ConsultationController(
-            ConsultationService consultationService) {
+    public ConsultationController(ConsultationService consultationService) {
         this.consultationService = consultationService;
     }
+
+    // =========================
+    // BOOK (STUDENT)
+    // =========================
 
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/book")
@@ -36,30 +38,77 @@ public class ConsultationController {
         );
     }
 
+    // =========================
+    // PAY (STUDENT)
+    // =========================
+
+    @PreAuthorize("hasRole('STUDENT')")
+    @PostMapping("/pay/{id}")
+    public ConsultationEntity pay(
+            @PathVariable Long id,
+            Authentication authentication) {
+
+        String studentEmail = authentication.getName();
+
+        return consultationService.payForConsultation(
+                id,
+                studentEmail
+        );
+    }
+
+    // =========================
+    // COMPLETE (MENTOR)
+    // =========================
+
     @PreAuthorize("hasRole('MENTOR')")
     @PostMapping("/complete/{id}")
     public ConsultationEntity complete(
-            @PathVariable Long id) {
+            @PathVariable Long id,
+            Authentication authentication) {
 
-        return consultationService.completeConsultation(id);
+        String mentorEmail = authentication.getName();
+
+        return consultationService.completeConsultation(
+                id,
+                mentorEmail
+        );
     }
+
+    // =========================
+    // FEEDBACK (STUDENT)
+    // =========================
 
     @PreAuthorize("hasRole('STUDENT')")
     @PostMapping("/feedback/{id}")
     public ConsultationEntity feedback(
             @PathVariable Long id,
-            @RequestParam Integer rating) {
+            @RequestParam Integer rating,
+            Authentication authentication) {
 
-        return consultationService.giveFeedback(id, rating);
+        String studentEmail = authentication.getName();
+
+        return consultationService.giveFeedback(
+                id,
+                studentEmail,
+                rating
+        );
     }
 
+    // =========================
+    // MENTOR BOOKINGS
+    // =========================
 
+    @PreAuthorize("hasRole('MENTOR')")
     @GetMapping("/mentor/{mentorId}")
     public List<ConsultationEntity> mentorBookings(
             @PathVariable Long mentorId) {
 
         return consultationService.getMentorBookings(mentorId);
     }
+
+    // =========================
+    // ADMIN VIEW
+    // =========================
 
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/all")

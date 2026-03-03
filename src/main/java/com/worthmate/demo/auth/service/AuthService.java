@@ -1,7 +1,5 @@
 package com.worthmate.demo.auth.service;
 
-import com.worthmate.demo.auth.request.AuthRequest;
-import com.worthmate.demo.auth.response.AuthResponse;
 import com.worthmate.demo.config.JwtUtil;
 import com.worthmate.demo.user.entity.UserEntity;
 import com.worthmate.demo.user.repository.UserRepository;
@@ -16,34 +14,48 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
     }
 
-    public String register(UserEntity user) {
-        if (userRepository.findByEmail(user.getEmail()) != null) {
+    // Register user
+    public UserEntity register(UserEntity user) {
+
+        // Check if email exists
+        if (userRepository.findByEmail(user.getEmail().toLowerCase()) != null) {
             throw new RuntimeException("Email already exists");
         }
-        //Encode Password
+
+        // Encode password
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        // Make user active
+        user.setEmail(user.getEmail().toLowerCase());
         user.setActive(true);
 
-        // Set default role (STUDENT for example)
+        // Default role = STUDENT
         if (user.getRole() == null) {
-            user.setRole(RoleEnum.STUDENT); // ya jo bhi enum tumhare UserEntity me hai
+            user.setRole(RoleEnum.STUDENT);
         }
-        userRepository.save(user);
-        return "Registration successful";
+
+        return userRepository.save(user); // password now saved correctly
     }
 
+    // Login user
     public String login(String email, String password) {
-        UserEntity user = userRepository.findByEmail(email);
-        if (user == null || !passwordEncoder.matches(password, user.getPassword())) {
-            throw new RuntimeException("Invalid credentials");
+        UserEntity user = userRepository.findByEmail(email.toLowerCase());
+
+        if (user == null) {
+            throw new RuntimeException("Invalid credentials: email not found");
         }
+
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new RuntimeException("Invalid credentials: wrong password");
+        }
+
+        // Generate JWT
         return jwtUtil.generateToken(user.getEmail(), user.getRole().name());
     }
 }

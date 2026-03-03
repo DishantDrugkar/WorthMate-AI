@@ -1,5 +1,6 @@
 package com.worthmate.demo.user.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.worthmate.demo.util.RoleEnum;
 import jakarta.persistence.*;
 
@@ -17,15 +18,19 @@ public class UserEntity {
     @Column(unique = true)
     private String email;
 
+    @JsonIgnore
+    @Column(nullable = false)
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private RoleEnum role;
 
     private Boolean active;
 
-    private LocalDateTime createdAt;
+    private LocalDateTime createdAt = LocalDateTime.now();
 
+    private LocalDateTime updatedAt = LocalDateTime.now();
     // Getters & Setters
 
     public Long getId() { return id; }
@@ -41,6 +46,15 @@ public class UserEntity {
     public void setPassword(String password) { this.password = password; }
 
     public RoleEnum getRole() { return role; }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     public void setRole(RoleEnum role) { this.role = role; }
 
     public Boolean getActive() { return active; }

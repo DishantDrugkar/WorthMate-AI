@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Consultation Booked</title>
+</head>
+<body style="font-family: Arial; background:#f4f4f4; padding:20px;">
+
+<div style="background:white; padding:20px; border-radius:8px;">
+
+    <h2>Hello <span th:text="${name}"></span> 👋</h2>
+
+    <p>Your consultation on <b th:text="${topic}"></b> has been booked.</p>
+
+    <p>
+        Scheduled at:
+        <b th:text="${date}"></b>
+    </p>
+
+    <p>Status: Pending Payment</p>
+
+    <hr>
+
+    <p style="font-size:12px;color:gray;">
+        WorthMate Platform
+    </p>
+
+</div>
+
+</body>
+</html>
