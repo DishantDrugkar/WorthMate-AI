@@ -64,8 +64,6 @@ Architecture Type:
 🔥 Core Features (Planned)
 	•	✅ User Registration & Login
 	•	✅ 1:1 AI Consultation Session
-	•	✅ Personalized Career Roadmap
-	•	✅ Skill Gap Detection
 	•	✅ Progress Tracking
 	•	🔜 AI Performance Analysis
 	•	🔜 Dashboard Analytics
