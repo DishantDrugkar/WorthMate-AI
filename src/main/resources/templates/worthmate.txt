@@ -1,0 +1,4 @@
+AI-powered 1:1 Career Consultation & Guidance Platform
+
+WorthMate-AI is an intelligent 1:1 consultation platform designed to help students and professionals
+receive structured career guidance, technical roadmap planning, and personalized feedback using AI.
